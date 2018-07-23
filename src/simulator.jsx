@@ -1,8 +1,5 @@
-/* eslint no-restricted-globals: ["off"] */
-
 import React from 'react';
 import { Enum } from 'enumify';
-import Engine from './engine/engine';
 
 class State extends Enum {}
 State.initEnum([
@@ -10,15 +7,6 @@ State.initEnum([
   'Idle',
   'Simulating',
 ]);
-
-const simulate = (sim, profile) => {
-  const ptrIn = sim.allocateUTF8(profile);
-  const ptrOut = sim._simulate(ptrIn);
-  sim._free(ptrIn);
-  const result = sim.UTF8ToString(ptrOut);
-  sim._free(ptrOut);
-  return result;
-};
 
 class Simulator extends React.Component {
   constructor(props) {
@@ -32,16 +20,10 @@ class Simulator extends React.Component {
   }
 
   componentDidMount = () => {
-    self.simcCallbacks = {
-      loaded: () => {
-        this.engineDidLoad();
-      },
-      updateProgress: (progress) => {
-        console.log(progress);
-      },
+    this.simWorker = new Worker('sim_worker.js');
+    this.simWorker.onmessage = (e) => {
+      this.workerMessage(e);
     };
-
-    this.simc = Engine();
   }
 
   engineDidLoad = () => {
@@ -49,6 +31,17 @@ class Simulator extends React.Component {
       switch (prev.state) {
         case State.Loading:
           return { state: State.Idle };
+        default:
+          return {};
+      }
+    });
+  }
+
+  engineSimDone = (result) => {
+    this.setState((prev) => {
+      switch (prev.state) {
+        case State.Simulating:
+          return { state: State.Idle, result };
         default:
           return {};
       }
@@ -63,13 +56,30 @@ class Simulator extends React.Component {
     this.setState((prev) => {
       switch (prev.state) {
         case State.Idle: {
-          const result = simulate(this.simc, prev.profile);
-          return { state: State.Idle, result };
+          this.simWorker.postMessage(prev.profile);
+          return { state: State.Simulating, result: '' };
         }
         default:
           return {};
       }
     });
+  }
+
+  workerMessage = (e) => {
+    const { event, result, progress } = e.data;
+    switch (event) {
+      case 'loaded':
+        this.engineDidLoad();
+        break;
+      case 'done':
+        this.engineSimDone(result);
+        break;
+      case 'progressUpdate':
+        console.log(progress.iteration);
+        break;
+      default:
+        break;
+    }
   }
 
   buttonText = () => {
