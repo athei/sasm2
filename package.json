@@ -6,6 +6,7 @@
   "author": "Alexander Theißen <alex@theissen.io>",
   "license": "MIT",
   "dependencies": {
+    "enumify": "^1.0.4",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
   },
