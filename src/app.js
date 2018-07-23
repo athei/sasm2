@@ -1,10 +1,8 @@
-import React from "react";
-import Simulator from "./simulator"
+import React from 'react';
+import Simulator from './simulator';
 
 class App extends React.Component {
-    render = (props) => {
-        return <Simulator />
-    }
+    render = props => <Simulator />
 }
 
 export default App;
