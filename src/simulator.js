@@ -30,11 +30,11 @@ class Simulator extends React.Component {
   }
 
     componentDidMount = () => {
-      self.simc_callbacks = {
+      self.simcCallbacks = {
         loaded: () => {
           this.engineDidLoad();
         },
-        update_progress: (progress) => {
+        updateProgress: (progress) => {
           console.log(progress);
         },
       };
