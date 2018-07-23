@@ -13,6 +13,7 @@
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-airbnb": "^2.5.2",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "eslint": "^4.19.1",
@@ -26,6 +27,7 @@
   },
   "scripts": {
     "start": "parcel --no-autoinstall public/index.html",
-    "build": "parcel build public/index.html"
+    "build": "parcel build public/index.html",
+    "lint": "eslint src/"
   }
 }
