@@ -1,4 +1,5 @@
 import React from "react";
+import Engine from "./engine/engine.js"
 
 class Simulator extends React.Component {
     constructor(props) {
@@ -14,6 +15,16 @@ class Simulator extends React.Component {
     }
 
     componentDidMount = () => {
+        self.simc_callbacks = {
+            "loaded": function() {
+                console.log("loaded");
+            },
+            "update_progress": function(progress) {
+                console.log(progress);
+            }
+        };
+
+        this.simc = Engine();
     }
 
     render = () => {
