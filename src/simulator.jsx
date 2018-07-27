@@ -1,4 +1,6 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import { Enum } from 'enumify';
 
 class State extends Enum {}
@@ -114,23 +116,23 @@ class Simulator extends React.Component {
     const { profile, result } = this.state;
     return (
       <div>
-        <textarea
-          rows="30"
-          cols="50"
+        <TextField
+          rows="20"
+          multiline
           placeholder="Paste profile here!"
           onChange={this.profileHandler}
           value={profile}
         />
-        <textarea
-          rows="30"
-          cols="50"
+        <TextField
+          rows="20"
+          multiline
           placeholder="Output"
           value={result}
           readOnly
         />
-        <button type="button" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
+        <Button color="primary" variant="contained" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
           {this.buttonText()}
-        </button>
+        </Button>
       </div>
     );
   }

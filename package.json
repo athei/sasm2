@@ -5,6 +5,8 @@
   "author": "Alexander Theißen <alex@theissen.io>",
   "license": "MIT",
   "dependencies": {
+    "@material-ui/core": "^1.4.1",
+    "@material-ui/icons": "^2.0.0",
     "enumify": "^1.0.4",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
