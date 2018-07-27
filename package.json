@@ -5,7 +5,6 @@
   "author": "Alexander Theißen <alex@theissen.io>",
   "license": "MIT",
   "dependencies": {
-    "@material/react-button": "^0.3.0",
     "enumify": "^1.0.4",
     "react": "^16.4.1",
     "react-dom": "^16.4.1"
@@ -31,10 +30,5 @@
     "build": "parcel build public/index.html",
     "lint": "eslint src/ --ext jsx --ext js",
     "fix": "eslint src/ --ext jsx --ext js --fix"
-  },
-  "sass": {
-    "includePaths": [
-      "./node_modules"
-    ]
   }
 }
