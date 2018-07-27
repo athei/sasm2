@@ -1,0 +1,61 @@
+# SimC Addon 1.10.4
+
+mage="Mörrer"
+level=110
+race=human
+region=eu
+server=aegwynn
+role=spell
+professions=alchemy=100/herbalism=100
+talents=1212132
+spec=fire
+
+head=,id=132863,bonus_id=3459/3630
+neck=,id=132444,enchant_id=5439,gem_id=151580,bonus_id=3529/1811/3630
+shoulder=,id=152354,enchant_id=5931,bonus_id=3614/1472/3528
+back=,id=147145,enchant_id=5436,bonus_id=3562/1483/3528
+chest=,id=139246,bonus_id=3536/1535/3336
+wrist=,id=147001,bonus_id=3562/1488/3336
+hands=,id=152137,enchant_id=5444,bonus_id=3611/1487/3528
+waist=,id=152355,bonus_id=3614/1472/3528
+legs=,id=147148,bonus_id=3562/1483/3528
+feet=,id=142148,gem_id=151580,bonus_id=3418/1808/1517/3337
+finger1=,id=134528,enchant_id=5423,bonus_id=3418/1525/3337
+finger2=,id=139065,enchant_id=5423,bonus_id=3573/1518/3337
+trinket1=,id=151962,bonus_id=3610/1472/3528
+trinket2=,id=151970,bonus_id=3610/1472/3528
+main_hand=,id=128820,gem_id=152294/137303/136769,bonus_id=730/1495/1502/1502
+off_hand=,id=133959
+
+### Gear from Bags
+#
+# Gravity Spiral (240)
+# head=,id=144274,bonus_id=3459/3570
+#
+# Collar of Enclosure (220)
+# head=,id=134424,bonus_id=3536/1530/3528
+#
+# Runebound Collar (210)
+# head=,id=152138,gem_id=151580,bonus_id=3610/1808/1472/3528
+#
+# Belo'vir's Final Stand (265)
+# chest=,id=133977,bonus_id=1811/3630
+#
+# Pyrotex Ignition Cloth (265)
+# hands=,id=144355,enchant_id=5444,bonus_id=1811/3630
+#
+# Norgannon's Foresight (240)
+# feet=,id=132455,bonus_id=3459/3570
+#
+# Jeweled Signet of Melandrus (220)
+# finger1=,id=134542,bonus_id=3536/1530/3528
+#
+# Insignia of the Grand Army (265)
+# finger1=,id=152626,enchant_id=5427,gem_id=151580,bonus_id=3459/3630
+#
+# Shard of the Exodar (265)
+# finger1=,id=132410,enchant_id=5427,gem_id=151580,bonus_id=3529/1811/3630
+#
+# Kil'jaeden's Burning Wish (240)
+# trinket1=,id=144259,bonus_id=1811/3570
+#
