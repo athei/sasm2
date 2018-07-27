@@ -1,7 +1,6 @@
 {
   "name": "sasm2",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "git@github.com:athei/sasm2.git",
   "author": "Alexander Theißen <alex@theissen.io>",
   "license": "MIT",
@@ -32,5 +31,8 @@
     "build": "parcel build public/index.html",
     "lint": "eslint src/ --ext jsx --ext js",
     "fix": "eslint src/ --ext jsx --ext js --fix"
+  },
+  "sass": {
+    "includePaths": ["./node_modules"]
   }
 }
