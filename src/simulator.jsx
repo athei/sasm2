@@ -1,5 +1,6 @@
 import React from 'react';
 import { Enum } from 'enumify';
+import Button from '@material/react-button';
 
 class State extends Enum {}
 State.initEnum([
@@ -128,9 +129,9 @@ class Simulator extends React.Component {
           value={result}
           readOnly
         />
-        <button type="button" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
+        <Button onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
           {this.buttonText()}
-        </button>
+        </Button>
       </div>
     );
   }
