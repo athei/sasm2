@@ -1,7 +1,31 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 import { Enum } from 'enumify';
+
+const styles = theme => ({
+  root: {
+    margin: theme.spacing.unit * 2,
+  },
+  item: {
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 2,
+  },
+  paper: {
+    padding: theme.spacing.unit * 1,
+  },
+  area: {
+    width: '100%',
+  },
+  button: {
+    marginTop: theme.spacing.unit * 1,
+  },
+});
 
 class State extends Enum {}
 State.initEnum([
@@ -113,29 +137,44 @@ class Simulator extends React.Component {
   }
 
   render = () => {
+    const { classes } = this.props;
     const { profile, result } = this.state;
     return (
-      <div>
-        <TextField
-          rows="20"
-          multiline
-          placeholder="Paste profile here!"
-          onChange={this.profileHandler}
-          value={profile}
-        />
-        <TextField
-          rows="20"
-          multiline
-          placeholder="Output"
-          value={result}
-          readOnly
-        />
-        <Button color="primary" variant="contained" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
-          {this.buttonText()}
-        </Button>
+      <div className={classes.root}>
+        <Grid container>
+          <Grid item xs={12} className={classes.item}>
+            <Paper className={classes.paper}>
+              <TextField
+                rows="15"
+                className={classes.area}
+                multiline
+                placeholder="Paste profile here!"
+                onChange={this.profileHandler}
+                value={profile}
+              />
+              <Button className={classes.button} color="primary" variant="contained" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
+                {this.buttonText()}
+              </Button>
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid container>
+          <Grid item xs={12} className={classes.item}>
+            <Paper className={classes.paper}>
+              <Typography variant="display1" gutterBottom>
+                Result
+              </Typography>
+              {result}
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }
 }
 
-export default Simulator;
+Simulator.propTypes = {
+  classes: PropTypes.object,
+};
+
+export default withStyles(styles)(Simulator);
