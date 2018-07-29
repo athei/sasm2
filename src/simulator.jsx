@@ -172,15 +172,13 @@ class Simulator extends React.Component {
     const { classes } = this.props;
     const { progress } = this.state;
     let value = 0;
-    let phaseText = progress.phase_name || 'Generating ';
-
-    console.log(progress);
+    let phaseText = progress.phase_name || 'Generating';
 
     if (progress.subphase_name) {
       phaseText += ` - ${progress.subhase_name} `;
     }
 
-    phaseText += `(${progress.phase}/${progress.total_phases}): `;
+    phaseText += ` (${progress.phase}/${progress.total_phases}): `;
 
     if (progress.iteration) {
       value = (progress.iteration * 100) / progress.total_iterations;
