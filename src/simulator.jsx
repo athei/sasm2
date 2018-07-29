@@ -12,13 +12,16 @@ import { Enum } from 'enumify';
 const styles = theme => ({
   root: {
     margin: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4,
   },
   item: {
     margin: 'auto',
     marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
   },
   paper: {
-    padding: theme.spacing.unit * 1,
+    padding: theme.spacing.unit * 3,
   },
   area: {
     width: '100%',
