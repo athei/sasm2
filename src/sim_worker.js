@@ -23,7 +23,13 @@ const simulate = (sim, profile) => {
 
 onmessage = (e) => {
   const result = simulate(engine, e.data);
-  postMessage({ event: 'done', result });
+  let parsed = {};
+  try {
+    parsed = JSON.parse(result);
+  } catch (err) {
+    console.warn(err);
+  }
+  postMessage({ event: 'done', result: parsed });
 };
 
 engine = Simc();

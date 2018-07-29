@@ -69,7 +69,7 @@ class Simulator extends React.Component {
     this.setState((prev) => {
       switch (prev.state) {
         case State.Simulating:
-          return { state: State.Idle, result: JSON.parse(result) };
+          return { state: State.Idle, result };
         default:
           return {};
       }
@@ -148,9 +148,24 @@ class Simulator extends React.Component {
     }
   }
 
+  renderResult = () => {
+    const { classes } = this.props;
+    const { result } = this.state;
+    return (
+      <Grid item xs={12} className={classes.item}>
+        <Paper className={classes.paper}>
+          <Typography variant="display1" gutterBottom>
+            Result
+          </Typography>
+          <Inspector name="Simulation" data={result} expandPaths={['$', '$.sim', '$.sim.statistics']} />
+        </Paper>
+      </Grid>
+    );
+  }
+
   render = () => {
     const { classes } = this.props;
-    const { profile, result } = this.state;
+    const { profile, result, state } = this.state;
     return (
       <div className={classes.root}>
         <Grid container>
@@ -171,14 +186,9 @@ class Simulator extends React.Component {
           </Grid>
         </Grid>
         <Grid container>
-          <Grid item xs={12} className={classes.item}>
-            <Paper className={classes.paper}>
-              <Typography variant="display1" gutterBottom>
-                Result
-              </Typography>
-              <Inspector name="Simulation" data={result} expandPaths={['$', '$.sim', '$.sim.statistics']} />
-            </Paper>
-          </Grid>
+          {state === State.Idle && 'sim' in result
+            && this.renderResult()
+          }
         </Grid>
       </div>
     );
