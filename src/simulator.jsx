@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { Enum } from 'enumify';
 
@@ -29,6 +30,10 @@ const styles = theme => ({
   button: {
     marginTop: theme.spacing.unit * 1,
   },
+  progressText: {
+    textAlign: 'right',
+    marginTop: theme.spacing.unit * 1,
+  },
 });
 
 class State extends Enum {}
@@ -46,6 +51,7 @@ class Simulator extends React.Component {
     this.state = {
       profile: '',
       result: {},
+      progress: {},
       state: State.Unloaded,
     };
   }
@@ -91,7 +97,7 @@ class Simulator extends React.Component {
           return { state: State.Loading };
         case State.Idle: {
           this.simWorker.postMessage(prev.profile);
-          return { state: State.Simulating, result: {} };
+          return { state: State.Simulating, result: {}, progress: {} };
         }
         default:
           return {};
@@ -109,7 +115,7 @@ class Simulator extends React.Component {
         this.engineSimDone(result);
         break;
       case 'progressUpdate':
-        console.log(progress.iteration);
+        this.setState({ progress });
         break;
       default:
         break;
@@ -151,21 +157,67 @@ class Simulator extends React.Component {
   renderResult = () => {
     const { classes } = this.props;
     const { result } = this.state;
+
     return (
-      <Grid item xs={12} className={classes.item}>
-        <Paper className={classes.paper}>
-          <Typography variant="display1" gutterBottom>
-            Result
-          </Typography>
-          <Inspector name="Simulation" data={result} expandPaths={['$', '$.sim', '$.sim.statistics']} />
-        </Paper>
-      </Grid>
+      <Paper className={classes.paper}>
+        <Typography variant="display1" gutterBottom>
+          Result
+        </Typography>
+        <Inspector name="Simulation" data={result} expandPaths={['$', '$.sim', '$.sim.statistics']} />
+      </Paper>
+    );
+  }
+
+  renderProgress = () => {
+    const { classes } = this.props;
+    const { progress } = this.state;
+    let value = 0;
+    let phaseText = progress.phase_name || 'Generating ';
+
+    console.log(progress);
+
+    if (progress.subphase_name) {
+      phaseText += ` - ${progress.subhase_name} `;
+    }
+
+    phaseText += `(${progress.phase}/${progress.total_phases}): `;
+
+    if (progress.iteration) {
+      value = (progress.iteration * 100) / progress.total_iterations;
+    }
+
+    return (
+      <Paper className={classes.paper}>
+        <Typography variant="display1" gutterBottom>
+          Progress
+        </Typography>
+        <LinearProgress variant="determinate" value={value} />
+        <Typography variant="subheading" className={classes.progressText}>
+          {phaseText}
+          {progress.iteration}
+          /
+          {progress.total_iterations}
+        </Typography>
+      </Paper>
     );
   }
 
   render = () => {
     const { classes } = this.props;
-    const { profile, result, state } = this.state;
+    const {
+      profile,
+      result,
+      state,
+      progress,
+    } = this.state;
+    let output;
+
+    if (state === State.Idle && 'sim' in result) {
+      output = this.renderResult();
+    } else if (state === State.Simulating && 'iteration' in progress) {
+      output = this.renderProgress();
+    }
+
     return (
       <div className={classes.root}>
         <Grid container>
@@ -186,9 +238,9 @@ class Simulator extends React.Component {
           </Grid>
         </Grid>
         <Grid container>
-          {state === State.Idle && 'sim' in result
-            && this.renderResult()
-          }
+          <Grid item xs={12} className={classes.item}>
+            {output}
+          </Grid>
         </Grid>
       </div>
     );
