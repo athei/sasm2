@@ -29,6 +29,7 @@ const styles = theme => ({
 
 class State extends Enum {}
 State.initEnum([
+  'Unloaded',
   'Loading',
   'Idle',
   'Simulating',
@@ -41,15 +42,12 @@ class Simulator extends React.Component {
     this.state = {
       profile: '',
       result: '',
-      state: State.Loading,
+      state: State.Unloaded,
     };
   }
 
   componentDidMount = () => {
-    this.simWorker = new Worker('sim_worker.js');
-    this.simWorker.onmessage = (e) => {
-      this.workerMessage(e);
-    };
+
   }
 
   engineDidLoad = () => {
@@ -81,6 +79,12 @@ class Simulator extends React.Component {
   buttonHandler = () => {
     this.setState((prev) => {
       switch (prev.state) {
+        case State.Unloaded:
+          this.simWorker = new Worker('sim_worker.js');
+          this.simWorker.onmessage = (e) => {
+            this.workerMessage(e);
+          };
+          return { state: State.Loading };
         case State.Idle: {
           this.simWorker.postMessage(prev.profile);
           return { state: State.Simulating, result: '' };
@@ -111,6 +115,8 @@ class Simulator extends React.Component {
   buttonText = () => {
     const { state } = this.state;
     switch (state) {
+      case State.Unloaded:
+        return 'Load Engine';
       case State.Loading:
         return 'Loading...';
       case State.Idle:
@@ -125,6 +131,8 @@ class Simulator extends React.Component {
   buttonEnabled = () => {
     const { state } = this.state;
     switch (state) {
+      case State.Unloaded:
+        return true;
       case State.Loading:
         return false;
       case State.Idle:
