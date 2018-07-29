@@ -10,7 +10,8 @@
     "enumify": "^1.0.4",
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "react-inspector": "^2.3.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",

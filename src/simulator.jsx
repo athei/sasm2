@@ -1,4 +1,5 @@
 import React from 'react';
+import Inspector from 'react-inspector';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -41,7 +42,7 @@ class Simulator extends React.Component {
 
     this.state = {
       profile: '',
-      result: '',
+      result: {},
       state: State.Unloaded,
     };
   }
@@ -65,7 +66,7 @@ class Simulator extends React.Component {
     this.setState((prev) => {
       switch (prev.state) {
         case State.Simulating:
-          return { state: State.Idle, result };
+          return { state: State.Idle, result: JSON.parse(result) };
         default:
           return {};
       }
@@ -87,7 +88,7 @@ class Simulator extends React.Component {
           return { state: State.Loading };
         case State.Idle: {
           this.simWorker.postMessage(prev.profile);
-          return { state: State.Simulating, result: '' };
+          return { state: State.Simulating, result: {} };
         }
         default:
           return {};
@@ -172,7 +173,7 @@ class Simulator extends React.Component {
               <Typography variant="display1" gutterBottom>
                 Result
               </Typography>
-              {result}
+              <Inspector name="Simulation" data={result} expandPaths={['$', '$.sim', '$.sim.statistics']} />
             </Paper>
           </Grid>
         </Grid>
