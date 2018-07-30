@@ -1,4 +1,4 @@
 {
-    "presets": ["airbnb"],
+    "presets": ["env", "react", "flow", "airbnb"],
     "plugins": ["transform-class-properties"]
 }
