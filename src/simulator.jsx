@@ -232,7 +232,7 @@ class Simulator extends React.Component {
 }
 
 Simulator.propTypes = {
-  classes: PropTypes.object,
+  classes: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 export default withStyles(styles)(Simulator);
