@@ -1,7 +1,7 @@
+/* @flow */
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import Simulator from './simulator';
 
 const styles = theme => ({
@@ -10,7 +10,13 @@ const styles = theme => ({
   },
 });
 
-function App(props) {
+type Props = {
+  classes: {
+    root: Object,
+  },
+};
+
+function App(props: Props) {
   const { classes } = props;
 
   return (
@@ -20,9 +26,5 @@ function App(props) {
     </div>
   );
 }
-
-App.propTypes = {
-  classes: PropTypes.objectOf(PropTypes.object).isRequired,
-};
 
 export default withStyles(styles)(App);

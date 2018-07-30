@@ -1,6 +1,6 @@
+/* @flow */
 import React from 'react';
 import Inspector from 'react-inspector';
-import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
@@ -26,15 +26,26 @@ const styles = theme => ({
   },
 });
 
-class State extends Enum {}
-State.initEnum([
+class Status extends Enum {}
+Status.initEnum([
   'Unloaded',
   'Loading',
   'Idle',
   'Simulating',
 ]);
 
-class Simulator extends React.Component {
+type Props = {
+  classes: Object
+};
+
+type State = {
+  profile: string,
+  result: Object,
+  progress: Object,
+  status: Status,
+};
+
+class Simulator extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -42,7 +53,7 @@ class Simulator extends React.Component {
       profile: '',
       result: {},
       progress: {},
-      state: State.Unloaded,
+      status: Status.Unloaded,
     };
   }
 
@@ -52,9 +63,9 @@ class Simulator extends React.Component {
 
   engineDidLoad = () => {
     this.setState((prev) => {
-      switch (prev.state) {
-        case State.Loading:
-          return { state: State.Idle };
+      switch (prev.status) {
+        case Status.Loading:
+          return { status: Status.Idle };
         default:
           return {};
       }
@@ -63,9 +74,9 @@ class Simulator extends React.Component {
 
   engineSimDone = (result) => {
     this.setState((prev) => {
-      switch (prev.state) {
-        case State.Simulating:
-          return { state: State.Idle, result };
+      switch (prev.status) {
+        case Status.Simulating:
+          return { status: Status.Idle, result };
         default:
           return {};
       }
@@ -78,16 +89,16 @@ class Simulator extends React.Component {
 
   buttonHandler = () => {
     this.setState((prev) => {
-      switch (prev.state) {
-        case State.Unloaded:
+      switch (prev.status) {
+        case Status.Unloaded:
           this.simWorker = new Worker('sim_worker.js');
           this.simWorker.onmessage = (e) => {
             this.workerMessage(e);
           };
-          return { state: State.Loading };
-        case State.Idle: {
+          return { status: Status.Loading };
+        case Status.Idle: {
           this.simWorker.postMessage(prev.profile);
-          return { state: State.Simulating, result: {}, progress: {} };
+          return { status: Status.Simulating, result: {}, progress: {} };
         }
         default:
           return {};
@@ -113,15 +124,15 @@ class Simulator extends React.Component {
   }
 
   buttonText = () => {
-    const { state } = this.state;
-    switch (state) {
-      case State.Unloaded:
+    const { status } = this.state;
+    switch (status) {
+      case Status.Unloaded:
         return 'Load Engine';
-      case State.Loading:
+      case Status.Loading:
         return 'Loading...';
-      case State.Idle:
+      case Status.Idle:
         return 'Start Simulation';
-      case State.Simulating:
+      case Status.Simulating:
         return 'Simulating...';
       default:
         return 'UNHANDLED';
@@ -129,15 +140,15 @@ class Simulator extends React.Component {
   }
 
   buttonEnabled = () => {
-    const { state } = this.state;
-    switch (state) {
-      case State.Unloaded:
+    const { status } = this.state;
+    switch (status) {
+      case Status.Unloaded:
         return true;
-      case State.Loading:
+      case Status.Loading:
         return false;
-      case State.Idle:
+      case Status.Idle:
         return true;
-      case State.Simulating:
+      case Status.Simulating:
         return false;
       default:
         return false;
@@ -195,14 +206,14 @@ class Simulator extends React.Component {
     const {
       profile,
       result,
-      state,
+      status,
       progress,
     } = this.state;
     let output;
 
-    if (state === State.Idle && 'sim' in result) {
+    if (status === Status.Idle && 'sim' in result) {
       output = this.renderResult();
-    } else if (state === State.Simulating && 'iteration' in progress) {
+    } else if (status === Status.Simulating && 'iteration' in progress) {
       output = this.renderProgress();
     }
 
@@ -230,9 +241,5 @@ class Simulator extends React.Component {
     );
   }
 }
-
-Simulator.propTypes = {
-  classes: PropTypes.objectOf(PropTypes.object).isRequired,
-};
 
 export default withStyles(styles)(Simulator);
