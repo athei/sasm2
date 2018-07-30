@@ -1,14 +1,23 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { withStyles } from '@material-ui/core/styles';
 import Simulator from './simulator';
 
-function App() {
+const styles = theme => ({
+  root: {
+    padding: theme.spacing.unit * 4,
+  },
+});
+
+function App(props) {
+  const { classes } = props;
+
   return (
-    <React.Fragment>
+    <div className={classes.root}>
       <CssBaseline />
       <Simulator />
-    </React.Fragment>
+    </div>
   );
 }
 
-export default App;
+export default withStyles(styles)(App);

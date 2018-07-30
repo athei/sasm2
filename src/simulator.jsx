@@ -11,16 +11,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { Enum } from 'enumify';
 
 const styles = theme => ({
-  root: {
-    margin: theme.spacing.unit * 2,
-    marginLeft: theme.spacing.unit * 4,
-    marginRight: theme.spacing.unit * 4,
-  },
-  item: {
-    margin: 'auto',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
-  },
   paper: {
     padding: theme.spacing.unit * 3,
   },
@@ -217,30 +207,26 @@ class Simulator extends React.Component {
     }
 
     return (
-      <div className={classes.root}>
-        <Grid container>
-          <Grid item xs={12} className={classes.item}>
-            <Paper className={classes.paper}>
-              <TextField
-                rows="15"
-                className={classes.area}
-                multiline
-                placeholder="Paste profile here!"
-                onChange={this.profileHandler}
-                value={profile}
-              />
-              <Button className={classes.button} color="primary" variant="contained" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
-                {this.buttonText()}
-              </Button>
-            </Paper>
-          </Grid>
+      <Grid container spacing={32}>
+        <Grid item xs={12}>
+          <Paper className={classes.paper}>
+            <TextField
+              rows="15"
+              className={classes.area}
+              multiline
+              placeholder="Paste profile here!"
+              onChange={this.profileHandler}
+              value={profile}
+            />
+            <Button className={classes.button} color="primary" variant="contained" onClick={this.buttonHandler} disabled={!this.buttonEnabled()}>
+              {this.buttonText()}
+            </Button>
+          </Paper>
         </Grid>
-        <Grid container>
-          <Grid item xs={12} className={classes.item}>
-            {output}
-          </Grid>
+        <Grid item xs={12}>
+          {output}
         </Grid>
-      </div>
+      </Grid>
     );
   }
 }
