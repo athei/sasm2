@@ -2,6 +2,7 @@
 
 mage="Mörrer"
 iterations=10000
+threads=1
 level=110
 race=human
 region=eu

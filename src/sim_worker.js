@@ -29,6 +29,7 @@ onmessage = (e) => {
     parsed = JSON.parse(result);
   } catch (err) {
     console.warn(err);
+    console.warn(result);
   }
   self.postMessage({ event: 'done', result: parsed });
 };
