@@ -11,9 +11,7 @@ const styles = theme => ({
 });
 
 type Props = {
-  classes: {
-    root: Object,
-  },
+  classes: Object
 };
 
 function App(props: Props) {

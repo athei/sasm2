@@ -8,22 +8,24 @@ export type MsgLoaded = {
   event: 'loaded',
 };
 
+export type Progress = {
+  iteration: number,
+  totalIterations: number,
+  phase: number,
+  totalPhases: number,
+  phaseName: string,
+  subphaseName: string,
+};
+
 export type MsgProgress = {
   event: 'progressUpdate',
-  progress: {
-    iteration: number,
-    totalIterations: number,
-    phase: number,
-    totalPhases: number,
-    phaseName: string,
-    subphaseName: string,
-  },
-}
+  progress: Progress,
+};
 
 export type MsgDone = {
   event: 'done',
   result: Object,
-}
+};
 
 export type SimMsg = MsgLoaded | MsgProgress | MsgDone;
 

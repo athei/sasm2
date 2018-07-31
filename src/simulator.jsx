@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { Enum } from 'enumify';
-import type { SimMsg } from './sim_worker';
+import type { SimMsg, Progress } from './sim_worker';
 
 const styles = theme => ({
   paper: {
@@ -42,7 +42,7 @@ type Props = {
 type State = {
   profile: string,
   result: Object,
-  progress: Object,
+  progress: ?Progress,
   status: Status,
 };
 
@@ -55,7 +55,7 @@ class Simulator extends React.Component<Props, State> {
     this.state = {
       profile: '',
       result: {},
-      progress: {},
+      progress: undefined,
       status: Status.Unloaded,
     };
   }
@@ -101,7 +101,7 @@ class Simulator extends React.Component<Props, State> {
           return { status: Status.Loading };
         case Status.Idle: {
           this.simWorker.postMessage(prev.profile);
-          return { status: Status.Simulating, result: {}, progress: {} };
+          return { status: Status.Simulating, result: {}, progress: undefined };
         }
         default:
           return {};
@@ -165,20 +165,19 @@ class Simulator extends React.Component<Props, State> {
     );
   }
 
-  renderProgress = () => {
+  renderProgress = (progress: Progress) => {
     const { classes } = this.props;
-    const { progress } = this.state;
     let value = 0;
-    let phaseText = progress.phase_name || 'Generating';
+    let phaseText = progress.phaseName || 'Generating';
 
-    if (progress.subphase_name) {
-      phaseText += ` - ${progress.subhase_name} `;
+    if (progress.subphaseName) {
+      phaseText += ` - ${progress.subphaseName} `;
     }
 
-    phaseText += ` (${progress.phase}/${progress.total_phases}): `;
+    phaseText += ` (${progress.phase}/${progress.totalPhases}): `;
 
     if (progress.iteration) {
-      value = (progress.iteration * 100) / progress.total_iterations;
+      value = (progress.iteration * 100) / progress.totalIterations;
     }
 
     return (
@@ -191,7 +190,7 @@ class Simulator extends React.Component<Props, State> {
           {phaseText}
           {progress.iteration}
           /
-          {progress.total_iterations}
+          {progress.totalIterations}
         </Typography>
       </Paper>
     );
@@ -209,8 +208,8 @@ class Simulator extends React.Component<Props, State> {
 
     if (status === Status.Idle && 'sim' in result) {
       output = this.renderResult();
-    } else if (status === Status.Simulating && 'iteration' in progress) {
-      output = this.renderProgress();
+    } else if (progress && status === Status.Simulating && 'iteration' in progress) {
+      output = this.renderProgress(progress);
     }
 
     return (
