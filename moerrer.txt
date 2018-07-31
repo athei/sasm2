@@ -1,6 +1,7 @@
 # SimC Addon 1.10.4
 
 mage="Mörrer"
+iterations=1000
 level=110
 race=human
 region=eu
