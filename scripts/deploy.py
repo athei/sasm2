@@ -2,7 +2,7 @@
 import gather
 import subprocess
 
-files = list(chain(gather.dist_dir.glob('*')))
+files = list(gather.dist_dir.glob('*'))
 
 # Compress files for webserver
 for f in files:
