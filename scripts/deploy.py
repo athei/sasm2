@@ -10,4 +10,4 @@ for f in files:
     subprocess.run(['brotli', '--keep', '--best', f])
 
 # Copy to webserver
-subprocess.run(['rsync', '-r', '--delete', '--compress',  'dist/*', 'alexander@home.theissen.io:/var/www/sasm/'])
+subprocess.run(['rsync', '-r', '--delete', '--compress',  str(gather.dist_dir.absolute()) + '/', 'alexander@home.theissen.io:/var/www/sasm/'])
