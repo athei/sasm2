@@ -1,16 +1,44 @@
 {
-    "extends": "airbnb",
-    "parser": "babel-eslint",
-    "env": {
-        "browser": true,
-        "worker": true
-    },
-    "plugins": [
-        "babel"
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended"
+  ],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "worker": true
+  },
+  "plugins": [
+    "babel",
+    "flowtype"
+  ],
+  "rules": {
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "_free",
+          "_simulate"
+        ]
+      }
     ],
-    "rules": {
-        "no-underscore-dangle": ["error", {"allow": [
-            "_free", "_simulate"
-        ]}]
-    }
+    "react/sort-comp": [
+      "error",
+      {
+        "order": [
+          "type-annotations",
+          "static-methods",
+          "lifecycle",
+          "everything-else",
+          "rendering"
+        ],
+        "groups": {
+          "rendering": [
+            "/^render.+$/",
+            "render"
+          ]
+        }
+      }
+    ]
+  }
 }

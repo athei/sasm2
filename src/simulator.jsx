@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
 import { Enum } from 'enumify';
+import type { SimMsg } from './sim_worker';
 
 const styles = theme => ({
   paper: {
@@ -46,6 +47,8 @@ type State = {
 };
 
 class Simulator extends React.Component<Props, State> {
+  simWorker: Worker;
+
   constructor(props) {
     super(props);
 
@@ -92,8 +95,8 @@ class Simulator extends React.Component<Props, State> {
       switch (prev.status) {
         case Status.Unloaded:
           this.simWorker = new Worker('sim_worker.js');
-          this.simWorker.onmessage = (e) => {
-            this.workerMessage(e);
+          this.simWorker.onmessage = (e: MessageEvent) => {
+            this.workerMessage((e.data: any));
           };
           return { status: Status.Loading };
         case Status.Idle: {
@@ -106,20 +109,13 @@ class Simulator extends React.Component<Props, State> {
     });
   }
 
-  workerMessage = (e) => {
-    const { event, result, progress } = e.data;
-    switch (event) {
-      case 'loaded':
-        this.engineDidLoad();
-        break;
-      case 'done':
-        this.engineSimDone(result);
-        break;
-      case 'progressUpdate':
-        this.setState({ progress });
-        break;
-      default:
-        break;
+  workerMessage = (data: SimMsg) => {
+    if (data.event === 'loaded') {
+      this.engineDidLoad();
+    } else if (data.event === 'done') {
+      this.engineSimDone(data.result);
+    } else if (data.event === 'progressUpdate') {
+      this.setState({ progress: data.progress });
     }
   }
 

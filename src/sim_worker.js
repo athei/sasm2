@@ -4,6 +4,29 @@ import Simc from './engine/engine';
 
 let engine;
 
+export type MsgLoaded = {
+  event: 'loaded',
+};
+
+export type MsgProgress = {
+  event: 'progressUpdate',
+  progress: {
+    iteration: number,
+    totalIterations: number,
+    phase: number,
+    totalPhases: number,
+    phaseName: string,
+    subphaseName: string,
+  },
+}
+
+export type MsgDone = {
+  event: 'done',
+  result: Object,
+}
+
+export type SimMsg = MsgLoaded | MsgProgress | MsgDone;
+
 self.simcCallbacks = {
   loaded: () => {
     self.postMessage({ event: 'loaded' });
@@ -22,7 +45,7 @@ const simulate = (sim: Object, profile: string): string => {
   return result;
 };
 
-onmessage = (e) => {
+self.onmessage = (e) => {
   const result = simulate(engine, e.data);
   let parsed = {};
   try {
