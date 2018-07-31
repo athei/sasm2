@@ -47,8 +47,8 @@ const simulate = (sim: Object, profile: string): string => {
   return result;
 };
 
-self.onmessage = (e) => {
-  const result = simulate(engine, e.data);
+self.onmessage = (e: MessageEvent) => {
+  const result = simulate(engine, (e.data: any));
   let parsed = {};
   try {
     parsed = JSON.parse(result);

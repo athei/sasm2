@@ -60,10 +60,6 @@ class Simulator extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount = () => {
-
-  }
-
   engineDidLoad = () => {
     this.setState((prev) => {
       switch (prev.status) {
@@ -75,7 +71,7 @@ class Simulator extends React.Component<Props, State> {
     });
   }
 
-  engineSimDone = (result) => {
+  engineSimDone = (result: Object) => {
     this.setState((prev) => {
       switch (prev.status) {
         case Status.Simulating:
@@ -86,8 +82,8 @@ class Simulator extends React.Component<Props, State> {
     });
   }
 
-  profileHandler = (e) => {
-    this.setState({ profile: e.target.value });
+  profileHandler = (e: SyntheticEvent<HTMLTextAreaElement>) => {
+    this.setState({ profile: e.currentTarget.value });
   }
 
   buttonHandler = () => {
@@ -119,7 +115,7 @@ class Simulator extends React.Component<Props, State> {
     }
   }
 
-  buttonText = () => {
+  buttonText = (): string => {
     const { status } = this.state;
     switch (status) {
       case Status.Unloaded:
@@ -135,7 +131,7 @@ class Simulator extends React.Component<Props, State> {
     }
   }
 
-  buttonEnabled = () => {
+  buttonEnabled = (): boolean => {
     const { status } = this.state;
     switch (status) {
       case Status.Unloaded:
