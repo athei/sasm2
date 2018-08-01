@@ -18,10 +18,12 @@ function App(props: Props) {
   const { classes } = props;
 
   return (
-    <div className={classes.root}>
+    <React.Fragment>
       <CssBaseline />
-      <Simulator />
-    </div>
+      <div className={classes.root}>
+        <Simulator />
+      </div>
+    </React.Fragment>
   );
 }
 
