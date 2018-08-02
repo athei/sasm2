@@ -8,7 +8,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
-import { Enum } from 'enumify';
 import type { SimMsg, Progress } from './sim_worker';
 
 const styles = theme => ({
@@ -27,13 +26,13 @@ const styles = theme => ({
   },
 });
 
-class Status extends Enum {}
-Status.initEnum([
-  'Unloaded',
-  'Loading',
-  'Idle',
-  'Simulating',
-]);
+const Status = {
+  Unloaded: 0,
+  Loading: 1,
+  Idle: 2,
+  Simulating: 3,
+};
+type StatusEnum = $Values<typeof Status>;
 
 type Props = {
   classes: Object
@@ -43,7 +42,7 @@ type State = {
   profile: string,
   result: Object,
   progress: ?Progress,
-  status: Status,
+  status: StatusEnum,
 };
 
 class Simulator extends React.Component<Props, State> {
