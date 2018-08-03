@@ -27,7 +27,12 @@ export type MsgDone = {
   result: Object,
 };
 
-export type SimMsg = MsgLoaded | MsgProgress | MsgDone;
+export type MsgFailed = {
+  event: 'failed',
+  error: string,
+};
+
+export type SimMsg = MsgLoaded | MsgProgress | MsgDone | MsgFailed;
 
 self.simcCallbacks = {
   loaded: () => {
@@ -52,11 +57,10 @@ self.onmessage = (e: MessageEvent) => {
   let parsed = {};
   try {
     parsed = JSON.parse(result);
+    self.postMessage({ event: 'done', result: parsed });
   } catch (err) {
-    console.warn(err);
-    console.warn(result);
+    self.postMessage({ event: 'failed', error: err.toString() });
   }
-  self.postMessage({ event: 'done', result: parsed });
 };
 
 engine = Simc();

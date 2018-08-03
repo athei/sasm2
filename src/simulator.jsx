@@ -8,7 +8,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { withStyles } from '@material-ui/core/styles';
-import type { SimMsg, Progress } from './sim_worker';
+import Simcraft from './simcraft';
+import type { SimProgress } from './simcraft';
 
 const styles = theme => ({
   paper: {
@@ -27,27 +28,24 @@ const styles = theme => ({
 });
 
 const Status = {
-  Unloaded: 0,
-  Loading: 1,
-  Idle: 2,
-  Simulating: 3,
+  Idle: 1,
+  Simulating: 2,
 };
 type StatusEnum = $Values<typeof Status>;
 
 type Props = {
-  classes: Object
+  classes: Object,
+  simc: Simcraft,
 };
 
 type State = {
   profile: string,
   result: Object,
-  progress: ?Progress,
+  progress: ?SimProgress,
   status: StatusEnum,
 };
 
 class Simulator extends React.Component<Props, State> {
-  simWorker: Worker;
-
   constructor(props) {
     super(props);
 
@@ -55,30 +53,8 @@ class Simulator extends React.Component<Props, State> {
       profile: '',
       result: {},
       progress: undefined,
-      status: Status.Unloaded,
+      status: Status.Idle,
     };
-  }
-
-  engineDidLoad = () => {
-    this.setState((prev) => {
-      switch (prev.status) {
-        case Status.Loading:
-          return { status: Status.Idle };
-        default:
-          return {};
-      }
-    });
-  }
-
-  engineSimDone = (result: Object) => {
-    this.setState((prev) => {
-      switch (prev.status) {
-        case Status.Simulating:
-          return { status: Status.Idle, result };
-        default:
-          return {};
-      }
-    });
   }
 
   profileHandler = (e: SyntheticEvent<HTMLTextAreaElement>) => {
@@ -87,40 +63,26 @@ class Simulator extends React.Component<Props, State> {
 
   buttonHandler = () => {
     this.setState((prev) => {
-      switch (prev.status) {
-        case Status.Unloaded:
-          this.simWorker = new Worker('sim_worker.js');
-          this.simWorker.onmessage = (e: MessageEvent) => {
-            this.workerMessage((e.data: any));
-          };
-          return { status: Status.Loading };
-        case Status.Idle: {
-          this.simWorker.postMessage(prev.profile);
-          return { status: Status.Simulating, result: {}, progress: undefined };
-        }
-        default:
-          return {};
+      if (prev.status !== Status.Idle) {
+        return {};
       }
-    });
-  }
 
-  workerMessage = (data: SimMsg) => {
-    if (data.event === 'loaded') {
-      this.engineDidLoad();
-    } else if (data.event === 'done') {
-      this.engineSimDone(data.result);
-    } else if (data.event === 'progressUpdate') {
-      this.setState({ progress: data.progress });
-    }
+      const { simc } = this.props;
+      simc.addJob(prev.profile, (progress) => {
+        this.setState({ progress });
+      }).then((result) => {
+        this.setState({ status: Status.Idle, result });
+      }, (err) => {
+        this.setState({ status: Status.Idle });
+        console.warn(err);
+      });
+      return { status: Status.Simulating, result: {}, progress: null };
+    });
   }
 
   buttonText = (): string => {
     const { status } = this.state;
     switch (status) {
-      case Status.Unloaded:
-        return 'Load Engine';
-      case Status.Loading:
-        return 'Loading...';
       case Status.Idle:
         return 'Start Simulation';
       case Status.Simulating:
@@ -133,10 +95,6 @@ class Simulator extends React.Component<Props, State> {
   buttonEnabled = (): boolean => {
     const { status } = this.state;
     switch (status) {
-      case Status.Unloaded:
-        return true;
-      case Status.Loading:
-        return false;
       case Status.Idle:
         return true;
       case Status.Simulating:
@@ -160,7 +118,7 @@ class Simulator extends React.Component<Props, State> {
     );
   }
 
-  renderProgress = (progress: Progress) => {
+  renderProgress = (progress: SimProgress) => {
     const { classes } = this.props;
     let value = 0;
     let phaseText = progress.phaseName || 'Generating';
