@@ -40,8 +40,6 @@ export default class Simcraft {
       progressCallback: null,
       currentJob: null,
     }));
-    console.log(navigator.hardwareConcurrency);
-    console.log(this.workers.length);
     this.workers.forEach((w) => {
       w.worker.onmessage = (e: MessageEvent) => {
         w.status = this.onWorkerMessage((e.data: any), w);
