@@ -33,17 +33,20 @@ export default class Simcraft {
   pendingJobs: Array<SimJob>;
 
   constructor() {
-    this.workers = [{
+    this.pendingJobs = [];
+    this.workers = Array.from({ length: navigator.hardwareConcurrency || 4 }, () => ({
       worker: new Worker('sim_worker.js'),
       status: Status.Loading,
       progressCallback: null,
       currentJob: null,
-    }];
-    this.pendingJobs = [];
-    const w = this.workers[0];
-    w.worker.onmessage = (e: MessageEvent) => {
-      w.status = this.onWorkerMessage((e.data: any), w);
-    };
+    }));
+    console.log(navigator.hardwareConcurrency);
+    console.log(this.workers.length);
+    this.workers.forEach((w) => {
+      w.worker.onmessage = (e: MessageEvent) => {
+        w.status = this.onWorkerMessage((e.data: any), w);
+      };
+    });
   }
 
   onWorkerMessage = (data: SimMsg, worker: SimWorker): StatusEnum => {
