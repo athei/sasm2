@@ -2,7 +2,7 @@
 /* eslint no-restricted-globals: ["off"] */
 import Simc from './engine/engine';
 
-let engine;
+let engine: Simc;
 
 export type MsgLoaded = {
   event: 'loaded',
