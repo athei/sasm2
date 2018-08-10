@@ -13,6 +13,7 @@
     "flowtype"
   ],
   "rules": {
+    "no-console": ["off"],
     "no-param-reassign": ["error", { "props": false }],
     "lines-between-class-members": ["error", "always", {
       "exceptAfterSingleLine": true
