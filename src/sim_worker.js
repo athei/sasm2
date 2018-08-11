@@ -1,6 +1,7 @@
 /* @flow */
 /* eslint no-restricted-globals: ["off"] */
 import Simc from './engine/engine';
+import instantiateCached from './cache';
 
 let engine: Simc;
 
@@ -41,6 +42,7 @@ self.simcCallbacks = {
   updateProgress: (progress) => {
     self.postMessage({ event: 'progressUpdate', progress });
   },
+  instantiateWasm: imports => instantiateCached(1, 'engine.wasm', imports),
 };
 
 const simulate = (sim: Object, profile: string): string => {

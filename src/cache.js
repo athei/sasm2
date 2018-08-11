@@ -1,8 +1,11 @@
-export default function instantiateCachedURL(dbVersion, url, importObject) {
+/* @flow */
+/* eslint no-restricted-globals: ["off"] */
+
+export default function instantiateCachedURL(dbVersion: number, url: string, importObject: ImportObject): Promise<WebAssembly$Instance> {
   const dbName = 'wasm-cache';
   const storeName = 'engine';
 
-  function instantiateWithFallback() {
+  function instantiateWithFallback(): Promise<ResultObject> {
     if (typeof WebAssembly.instantiateStreaming === 'function') {
       console.log('Instantiate Streaming');
       return WebAssembly.instantiateStreaming(fetch(url), importObject);
@@ -17,7 +20,7 @@ export default function instantiateCachedURL(dbVersion, url, importObject) {
 
   function openDatabase() {
     return new Promise(((resolve, reject) => {
-      const request = indexedDB.open(dbName, dbVersion);
+      const request = self.indexedDB.open(dbName, dbVersion);
       request.onerror = reject.bind(null, 'Error opening wasm cache database');
       request.onsuccess = () => { resolve(request.result); };
       request.onupgradeneeded = (event) => {
@@ -44,18 +47,18 @@ export default function instantiateCachedURL(dbVersion, url, importObject) {
     }));
   }
 
-  function storeInDatabase(db, results) {
+  function storeInDatabase(db, results): Promise<WebAssembly$Instance> {
     return new Promise(((resolve) => {
-      console.log(`Storing... ${results}`);
+      console.log(results);
       const store = db.transaction([storeName], 'readwrite').objectStore(storeName);
       const request = store.put(results.module, url);
       request.onerror = (err) => {
         console.log(`Failed to store in wasm cache: ${err}`);
-        resolve(results);
+        resolve(results.instance);
       };
       request.onsuccess = () => {
         console.log(`Successfully stored ${url} in wasm cache`);
-        resolve(results);
+        resolve(results.instance);
       };
     }));
   }
@@ -65,15 +68,15 @@ export default function instantiateCachedURL(dbVersion, url, importObject) {
     return WebAssembly.instantiate(module, importObject);
   }, (errMsg) => {
     console.log(`Compiling from scratch: ${errMsg}`);
-    return instantiateWithFallback(url, importObject).then((results) => {
+    return instantiateWithFallback().then((results) => {
       console.log('Instantiate done -> storing');
       return storeInDatabase(db, results);
-    }).then((results) => {
+    }).then((instance) => {
       console.log('Storing Done');
-      return results;
+      return instance;
     });
   }), (errMsg) => {
     console.log(`Opening database failed. Just compile and do store: ${errMsg}`);
-    return instantiateWithFallback(url, importObject);
+    return instantiateWithFallback().then(results => results.instance);
   });
 }
