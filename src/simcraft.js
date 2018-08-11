@@ -34,22 +34,16 @@ export default class Simcraft {
 
   constructor() {
     this.pendingJobs = [];
-    this.workers = Array.from({ length: navigator.hardwareConcurrency || 4 }, () => ({
-      worker: new Worker('sim_worker.js'),
-      status: Status.Loading,
-      progressCallback: null,
-      currentJob: null,
-    }));
-    this.workers.forEach((w) => {
-      w.worker.onmessage = (e: MessageEvent) => {
-        w.status = this.onWorkerMessage((e.data: any), w);
-      };
-    });
+    this.workers = [];
+    // start with one worker so the first one comes up fast
+    this.fillWorkerPool(1);
   }
 
   onWorkerMessage = (data: SimMsg, worker: SimWorker): StatusEnum => {
     if (data.event === 'loaded') {
-      return this.scheduleWorker(worker);
+      const newState = this.scheduleWorker(worker);
+      this.fillWorkerPool(); // spawn the remaing workers after the first
+      return newState;
     }
 
     if (data.event === 'done') {
@@ -81,6 +75,28 @@ export default class Simcraft {
 
     console.error('Unvalid message from sim_worker.');
     return Status.Unloaded;
+  }
+
+  fillWorkerPool = (max: ?number) => {
+    let limit = navigator.hardwareConcurrency || 4;
+    // supplied max can override hw concurrency value
+    if (max != null && max > 0) {
+      limit = max;
+    }
+    const missing = Math.max(0, limit - this.workers.length);
+
+    for (let i = 0; i < missing; i += 1) {
+      const worker = {
+        worker: new Worker('sim_worker.js'),
+        status: Status.Loading,
+        progressCallback: null,
+        currentJob: null,
+      };
+      worker.worker.onmessage = (e: MessageEvent) => {
+        worker.status = this.onWorkerMessage((e.data: any), worker);
+      };
+      this.workers.push(worker);
+    }
   }
 
   scheduleWorker = (worker: SimWorker): StatusEnum => {
