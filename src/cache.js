@@ -1,7 +1,11 @@
 /* @flow */
 /* eslint no-restricted-globals: ["off"] */
 
-export default function instantiateCachedURL(dbVersion: number, url: string, importObject: ImportObject): Promise<WebAssembly$Instance> {
+const instantiateCachedURL = (
+  dbVersion: number,
+  url: string,
+  importObject: ImportObject,
+): Promise<WebAssembly$Instance> => {
   const dbName = 'wasm-cache';
   const storeName = 'engine';
 
@@ -18,7 +22,7 @@ export default function instantiateCachedURL(dbVersion: number, url: string, imp
     });
   }
 
-  function openDatabase() {
+  function openDatabase(): Promise<IDBDatabase> {
     return new Promise(((resolve, reject) => {
       const request = self.indexedDB.open(dbName, dbVersion);
       request.onerror = reject.bind(null, 'Error opening wasm cache database');
@@ -35,19 +39,19 @@ export default function instantiateCachedURL(dbVersion: number, url: string, imp
     }));
   }
 
-  function lookupInDatabase(db) {
+  function lookupInDatabase(db: IDBDatabase): Promise<WebAssembly$Module> {
     return new Promise(((resolve, reject) => {
       const store = db.transaction([storeName]).objectStore(storeName);
       const request = store.get(url);
       request.onerror = reject.bind(null, `Error getting wasm module ${url}`);
       request.onsuccess = () => {
-        if (request.result) resolve(request.result);
+        if (request.result) resolve((request.result: any));
         else reject(new Error(`Module ${url} was not found in wasm cache`));
       };
     }));
   }
 
-  function storeInDatabase(db, results): Promise<WebAssembly$Instance> {
+  function storeInDatabase(db: IDBDatabase, results: ResultObject): Promise<WebAssembly$Instance> {
     return new Promise(((resolve) => {
       console.log(results);
       const store = db.transaction([storeName], 'readwrite').objectStore(storeName);
@@ -79,4 +83,6 @@ export default function instantiateCachedURL(dbVersion: number, url: string, imp
     console.log(`Opening database failed. Just compile and do store: ${errMsg}`);
     return instantiateWithFallback().then(results => results.instance);
   });
-}
+};
+
+export default instantiateCachedURL;
